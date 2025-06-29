@@ -23,9 +23,8 @@ c
      *          field(nblock, nfieldv)
       character*80 cmname
 c
-      parameter( nrData=6 )
+      parameter( nrData=6, arfa = 1.d0, beta = 1.d0, gamma = 1.d0)
 c     Input fracture model parameters
-      parameter( a = 1.d0, b = 1.d0, r = 1.d0)
 
       
       
@@ -66,7 +65,7 @@ c     Void growth rate
 c     D_new=D_old+void growth rate*plastic strian increment
         damageNew = damageOld + deltaeps*vg
 c Element Deletion
-        if(damageNew .gt. a) then 
+        if(damageNew .gt. arfa) then 
 
             stateNew(k,6) = 0.d0
         endif
@@ -105,16 +104,16 @@ c     Extract stress tensor
           sig3=s33-sh123
 c     stress triaxiality
           tri = sh123/(smises + 1.d0)
-          J31=sig1*sig2*sig3+2*s12*s23*s31
+          J31=sig1*sig2*sig3+2.d0*s12*s23*s31
           J32=sig1*(s23**2.d0)+sig2*(s31**2.d0)+sig3*(s12**2.d0)
           J3=J31-J32
           xi1=J3/(smises**3.d0+1.d0)
 c     Lode angle parameter
-          xi=27.0d0*xi1/2.d0
+          xi=27.d0*xi1/2.d0
 c     Effect of trixiality         
-          dam1=2.718d0**(b*tri)
+          dam1=2.718d0**(beta*tri)
 c     Effect of Lode angle parameter     
-          dam2=2.718d0**(-r*xi)
+          dam2=2.718d0**(-gamma*xi)
           dam=dam1*dam2
         stateNew(k,1) = xi
         stateNew(k,2) = tri
